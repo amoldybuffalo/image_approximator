@@ -1,6 +1,6 @@
 Description
 ---
-Thius softwrae approximates images using mathematical functions.
+This software approximates images using mathematical functions.
 
 Requirements
 ---
