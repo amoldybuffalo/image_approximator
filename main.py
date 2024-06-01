@@ -2,11 +2,7 @@ import cv2
 from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit
 import numpy as np
-from sympy import symbols
-from numpy import linspace
-from sympy import lambdify
 import math 
-import sys
 
 def func1(x, a, b, c):
     return a*x**2  + b*x + c
@@ -14,7 +10,7 @@ def func1(x, a, b, c):
 def func2(x, a, b):
     return a*x+b
 
-def func3(x, a,b):
+def func3(x,a,b):
     return a*math.e**x + b
 
 def func4(x,a,b):
@@ -31,6 +27,7 @@ def func5(x,a,b,c,d):
     return a*x**3 + b*x**2 + c*x + d
 
 functions = [func1, func2, func3, func4, func5]
+representations = ["ax^2+bx+c", "ax+b", "ae^x+b", "a*sin(x)+b", "sqrt(a^2-x^2)+b", "ax^3+bx^2+cx+d"]
 
 def mean_square_error(a, b):
     return np.square(np.subtract(a,b)).mean() 
@@ -83,8 +80,21 @@ def read_image(path):
             if img[i,j] < threshhold:
                 img[i,j] =  0
             else:
-                img[i,j] = 1 if show_original_image:
-        plt.imshow(img)
+                img[i,j] = 1
+    return img
+
+def find_contours(img):
+    contours, hierarchy = cv2.findContours(img, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    return contours
+
+
+def plot_polynomial(function, input, independent_variable="x"):
+    output = calculate_polynomial(function, input)
+    if independent_variable == "x":    
+        plt.plot(input, output)
+    elif independent_variable == "y":
+        plt.plot(output, input)
+
 
 def find_function(points, independent_variable="x"):
     x_values = [point[0] for point in points]
@@ -121,7 +131,7 @@ def find_all_functions(contour, detail):
     y_values = [point[1] for point in points]
     #plt.plot(x_values, y_values)
     top_half = [point for point in points  if point[1] <= (max(y_values)+min(y_values))/2]
-    bottom_half = [point for point in points if point[1] > (max(y_values)+min(y_values))/2]
+    bottom_half = [point for point in points if point[1] > (max(y_values)+minimage(y_values))/2]
     left_half = [point for point in points  if point[0] <= (max(x_values)+min(x_values))/2]
     right_half = [point for point in points  if point[0] > (max(x_values)+min(x_values))/2]
     find_section(top_half, detail, "x")
@@ -140,10 +150,10 @@ def get_points_from_contour(contour):
 
 
 def approximate_image(filename, show_original_image=False):
-    img = read_image("dog.png")
+    img = read_image(filename)
      if show_original_image:
         plt.imshow(img)
-    contours = contours(img)
+    contours = find_contours(img)
     for contour in contours:
         find_all_functions(contour, 7)
    
@@ -157,6 +167,10 @@ if len(sys.argv) > 1:
     approximate_image(sys.argv[1])
 else:
     print("Please put an image path as an argument.")
+
+
+   
+
 
 
     
