@@ -3,6 +3,7 @@ from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit
 import numpy as np
 import math 
+import sys
 
 def func1(x, a, b, c):
     return a*x**2  + b*x + c
@@ -131,7 +132,7 @@ def find_all_functions(contour, detail):
     y_values = [point[1] for point in points]
     #plt.plot(x_values, y_values)
     top_half = [point for point in points  if point[1] <= (max(y_values)+min(y_values))/2]
-    bottom_half = [point for point in points if point[1] > (max(y_values)+minimage(y_values))/2]
+    bottom_half = [point for point in points if point[1] > (max(y_values)+min(y_values))/2]
     left_half = [point for point in points  if point[0] <= (max(x_values)+min(x_values))/2]
     right_half = [point for point in points  if point[0] > (max(x_values)+min(x_values))/2]
     find_section(top_half, detail, "x")
@@ -151,7 +152,7 @@ def get_points_from_contour(contour):
 
 def approximate_image(filename, show_original_image=False):
     img = read_image(filename)
-     if show_original_image:
+    if show_original_image:
         plt.imshow(img)
     contours = find_contours(img)
     for contour in contours:
